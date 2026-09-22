@@ -1,5 +1,6 @@
 import atexit
 import sys
+import threading
 
 
 class UIBuilder:
@@ -8,9 +9,10 @@ class UIBuilder:
         self.grid_size_y = grid_size_y
         self.grid = [[' ' for _ in range(grid_size_x)] for _ in range(grid_size_y)]
         self.ui_elements = []
+        self.interactice_elements = []
         self.last_update = self.deepcopy(self.grid)
-        self.old_settings = None
         self.run = True
+        self.events = []
         atexit.register(self.signal_handler)
 
     def signal_handler(self):
@@ -70,31 +72,16 @@ class UIBuilder:
 
     def add_ui_element(self, element):
         self.ui_elements.append(element)
+        if element.is_interactive:
+            self.interactice_elements.append(element)
 
-    def getchar(self):
-        try:
-            import msvcrt
-            return msvcrt.getch().decode('utf-8', 'ignore')
-        except ImportError:
-            import termios
-            import tty
-
-            fd = sys.stdin.fileno()
-            self.old_settings = termios.tcgetattr(fd)
-
-            try:
-                tty.setcbreak(fd)
-                ch = sys.stdin.read(1)
-            finally:
-                termios.tcsetattr(fd, termios.TCSADRAIN, self.old_settings)
-
-            return ch
-
-    def Loop(self):
+    def Loop(self, func, *args, **kwargs):
+        for event in self.events:
+            threading.Thread(event, daemon=True)
         while self.run:
-            pass
+            func(*args, **kwargs)
 
-    def ExitLoog(self):
+    def ExitLoop(self):
         self.run = False
 
     @staticmethod
@@ -113,42 +100,33 @@ class UIBuilder:
 
         return text
 
-class ProgressBar:
-    def __init__(self, uiBuilder: UIBuilder, location_x, location_y, size):
-        self.ui = uiBuilder
-        self.location_x = location_x
-        self.location_y = location_y
-        self.size = size
-        self.locations = [(location_x + i, location_y) for i in range(size)]
-        self.progress = 0
-        self.total_progress = 100
+    @staticmethod
+    def getchar():
+        try:
+            import msvcrt
+            return msvcrt.getch().decode('utf-8', 'ignore')
+        except ImportError:
+            import termios
+            import tty
 
-    def change_progress(self, progress):
-        self.progress = progress
-        self.ui.draw_change()
+            fd = sys.stdin.fileno()
+            old_settings = termios.tcgetattr(fd)
 
-    def add_to_grid(self):
-        current_progress = []
+            try:
+                tty.setcbreak(fd)
+                ch = sys.stdin.read(1)
+            finally:
+                termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
-        for i in range(self.size):
-            if i < int(self.size * self.progress / self.total_progress):
-                current_progress.append('█')
-            else:
-                current_progress.append('░')
+            return ch
 
-        for i, loc in enumerate(self.locations):
-            self.ui.grid[loc[1]][loc[0]] = current_progress[i]
+    @staticmethod
+    def read_key():
+        ch = UIBuilder.getchar()
+        if ch == '\x1b':
+            import select
+            if select.select([sys.stdin], [], [], 0.1)[0]:
+                seq = sys.stdin.read(2)
 
-
-class Label:
-    def __init__(self, uiBuilder: UIBuilder, location_x, location_y, text):
-        self.ui = uiBuilder
-        self.location_x = location_x
-        self.location_y = location_y
-        self.text = text
-        self.max_length = self.ui.grid_size_x - location_x - 1
-
-    def add_to_grid(self):
-        self.text = UIBuilder.truncate_text(self.text, self.max_length)
-        for i, char in enumerate(self.text):
-            self.ui.grid[self.location_y][self.location_x + i] = char
+            return 'ESC'
+        return ch
