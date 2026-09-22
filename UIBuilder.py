@@ -127,6 +127,18 @@ class UIBuilder:
             import select
             if select.select([sys.stdin], [], [], 0.1)[0]:
                 seq = sys.stdin.read(2)
-
+                if seq == '[A': return "UP"
+                elif seq == '[B': return "DOWN"
+                elif seq == '[C': return "RIGHT"
+                elif seq == '[D': return "LEFT" 
             return 'ESC'
+        elif ch == '\x09': return "TAB"
+        elif ch == '\x0a': return "ENTER"
+        elif ch == '\x7f': return "BACK"
         return ch
+
+
+class Event:
+    def __init__(self, type, value) -> None:
+        self.type = type 
+        self.value = value

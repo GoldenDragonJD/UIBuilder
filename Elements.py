@@ -1,11 +1,18 @@
 from UIBuilder import UIBuilder
 
 
-class ProgressBar:
-    def __init__(self, uiBuilder: UIBuilder, location_x, location_y, size):
+class Element:
+    def __init__(self, uiBuilder: UIBuilder, location_x, location_y) -> None:
         self.ui = uiBuilder
         self.location_x = location_x
         self.location_y = location_y
+        self.is_active = True
+        self.is_interactive = False
+
+
+class ProgressBar(Element):
+    def __init__(self, uiBuilder: UIBuilder, location_x, location_y, size):
+        super().__init__(uiBuilder, location_x, location_y)
         self.size = size
         self.locations = [(location_x + i, location_y) for i in range(size)]
         self.progress = 0
