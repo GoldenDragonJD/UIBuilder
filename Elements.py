@@ -20,7 +20,8 @@ class ProgressBar(Element):
 
     def change_progress(self, progress):
         self.progress = progress
-        self.ui.draw_change()
+        if self.progress >= self.total_progress: self.progress = self.total_progress
+        elif self.progress <= 0: self.progress = 0
 
     def add_to_grid(self):
         current_progress = []
@@ -43,8 +44,8 @@ class Label(Element):
 
     def add_to_grid(self):
         self.text = UIBuilder.truncate_text(self.text, self.max_length)
-        for i, char in enumerate(self.text):
-            self.ui.grid[self.location_y][self.location_x + i] = char
+        for i in range(self.max_length):
+            self.ui.grid[self.location_y][self.location_x + i] = self.text[i] if i < len(self.text) else " "
 
 
 class Input(Element):
@@ -52,3 +53,16 @@ class Input(Element):
         super().__init__(uiBuilder, location_x, location_y)
         self.placeholder = ""
         self.is_interactive = True
+        self.input_buffer = []
+        self.max_input = 6
+        self.grid = [[' ' for _ in range(self.max_input + 2)] for _ in range(3)]
+        self.in_focus = False
+        UIBuilder.add_border(self.grid)
+
+    def add_to_grid(self):
+        for loc_y in range(len(self.grid)):
+            for loc_x in range(len(self.grid[loc_y])):
+                self.ui.grid[loc_y + self.location_y][loc_x + self.location_x] = self.grid[loc_y][loc_x]
+
+    def on_enter(self, func):
+        func(self)
