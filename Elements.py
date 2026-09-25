@@ -65,15 +65,13 @@ class Label(Element):
 
 
 class Input(Element):
-    def __init__(
-        self, uiBuilder: UIBuilder, location_x, location_y, max_input=6
-    ) -> None:
+    def __init__(self, uiBuilder: UIBuilder, location_x, location_y, size=6) -> None:
         super().__init__(uiBuilder, location_x, location_y)
         self.placeholder = ""
         self.is_interactive = True
         self.input_buffer = []
-        self.max_input = max_input
-        self.grid = [[" " for _ in range(self.max_input + 2)] for _ in range(3)]
+        self.size = size
+        self.grid = [[" " for _ in range(self.size + 2)] for _ in range(3)]
         self.focus = False
         self.border_type = Border.LIGHT
         self.enter_func = lambda *_, **__: None
@@ -95,7 +93,7 @@ class Input(Element):
                 )
 
     def render_input(self):
-        # self.placeholder = UIBuilder.truncate_text(self.placeholder, self.max_input)
+        # self.placeholder = UIBuilder.truncate_text(self.placeholder, self.size)
         border_left = self.grid[1][0]
         border_right = self.grid[1][-1]
         self.grid[1] = [border_left] + self.to_render + [border_right]  # pyright: ignore[reportOperatorIssue]
@@ -118,24 +116,26 @@ class Input(Element):
         to_use_input = (
             self.input_buffer
             if self.input_buffer
-            else UIBuilder.truncate_text(self.placeholder, self.max_input)
+            else UIBuilder.truncate_text(self.placeholder, self.size)
         )
 
         if self.focus:
             self.capture_input()
-            if len(to_use_input) > self.max_input:
-                difference = len(to_use_input) - self.max_input
-                self.to_render = to_use_input[0 + difference :]
+            if len(to_use_input) > self.size:
+                difference = len(to_use_input) - self.size + 1
+                self.to_render = to_use_input[0 + difference :] + [" "]
+            elif len(to_use_input) == self.size and len(self.input_buffer) == self.size:
+                self.to_render = to_use_input[1:] + [" "]
             else:
-                self.to_render = list("".join(to_use_input).ljust(self.max_input))
+                self.to_render = list("".join(to_use_input).ljust(self.size))
             Element.add_highlight(self.to_render)
         else:
             if self.to_render:
                 self.to_render[0].replace("\033[27m", "")
-            if len(to_use_input) > self.max_input:
-                self.to_render = to_use_input[: self.max_input :]
+            if len(to_use_input) > self.size:
+                self.to_render = to_use_input[: self.size :]
             else:
-                self.to_render = list("".join(to_use_input).ljust(self.max_input))
+                self.to_render = list("".join(to_use_input).ljust(self.size))
 
     def capture_input(self):
         if self.ui.current_event.type != Event.KEY_PRESS:
@@ -144,11 +144,22 @@ class Input(Element):
         char = self.ui.current_event.value
 
         if char == "BACK" and self.input_buffer:
-            self.input_buffer.pop()
+            self.input_buffer.pop(self.where_to_place - 1)
             self.where_to_place -= 1 if self.where_to_place > 0 else 0
+        elif char == "LEFT":
+            self.where_to_place = (
+                self.where_to_place - 1 if self.where_to_place > 0 else 0
+            )
+        elif char == "RIGHT":
+            self.where_to_place = (
+                self.where_to_place + 1
+                if self.where_to_place < len(self.input_buffer)
+                else len(self.input_buffer)
+            )
         elif len(char) == 1:  # pyright: ignore[reportArgumentType]
             if self.where_to_place == len(self.input_buffer):
                 self.input_buffer.append(char)
                 self.where_to_place += 1
             else:
-                self.input_buffer.insert(self.where_to_place, self.input_buffer)
+                self.input_buffer.insert(self.where_to_place, char)
+                self.where_to_place += 1

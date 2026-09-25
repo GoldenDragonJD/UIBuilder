@@ -176,15 +176,47 @@ class UIBuilder:
             if select.select([sys.stdin], [], [], 0.05)[0]:
                 c1 = UIBuilder.getchar()
                 if c1 == "[" or c1 == "O":
-                    c2 = UIBuilder.getchar()
-                    if c2 == "A":
-                        return "UP"
-                    if c2 == "B":
-                        return "DOWN"
-                    if c2 == "C":
-                        return "RIGHT"
-                    if c2 == "D":
-                        return "LEFT"
+                    seq = c1
+                    while True:
+                        if len(seq) > 1 and (seq[-1].isalpha() or seq[-1] == "~"):
+                            break
+                        if select.select([sys.stdin], [], [], 0.01)[0]:
+                            seq += UIBuilder.getchar()
+                        else:
+                            break
+                    
+                    ansi_map = {
+                        "[A": "UP", "[B": "DOWN", "[C": "RIGHT", "[D": "LEFT",
+                        "[1;2A": "SHIFT_UP", "[1;3A": "ALT_UP", "[1;5A": "CTRL_UP", "[1;6A": "CTRL_SHIFT_UP",
+                        "[1;2B": "SHIFT_DOWN", "[1;3B": "ALT_DOWN", "[1;5B": "CTRL_DOWN", "[1;6B": "CTRL_SHIFT_DOWN",
+                        "[1;2C": "SHIFT_RIGHT", "[1;3C": "ALT_RIGHT", "[1;5C": "CTRL_RIGHT", "[1;6C": "CTRL_SHIFT_RIGHT",
+                        "[1;2D": "SHIFT_LEFT", "[1;3D": "ALT_LEFT", "[1;5D": "CTRL_LEFT", "[1;6D": "CTRL_SHIFT_LEFT",
+                        "[H": "HOME", "[1~": "HOME",
+                        "[F": "END", "[4~": "END",
+                        "[2~": "INSERT",
+                        "[3~": "DELETE",
+                        "[5~": "PAGE_UP",
+                        "[6~": "PAGE_DOWN",
+                        "OP": "F1", "[11~": "F1",
+                        "OQ": "F2", "[12~": "F2",
+                        "OR": "F3", "[13~": "F3",
+                        "OS": "F4", "[14~": "F4",
+                        "[15~": "F5",
+                        "[17~": "F6",
+                        "[18~": "F7",
+                        "[19~": "F8",
+                        "[20~": "F9",
+                        "[21~": "F10",
+                        "[23~": "F11",
+                        "[24~": "F12",
+                        "Op": "0", "Oq": "1", "Or": "2", "Os": "3", "Ot": "4",
+                        "Ou": "5", "Ov": "6", "Ow": "7", "Ox": "8", "Oy": "9",
+                        "On": ".", "OM": "ENTER", "Om": "-", "Ok": "+", "Ol": "+",
+                        "Oj": "*", "Oo": "/"
+                    }
+                    
+                    if seq in ansi_map:
+                        return ansi_map[seq]
             return "ESC"
 
         if ch == "\x09":
