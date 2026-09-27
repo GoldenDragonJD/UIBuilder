@@ -104,12 +104,12 @@ class UIBuilder:
 
             self.interactice_elements[0].focus = True
 
-            for element in self.interactice_elements:
-                element.on_focus()
-
             for element in self.ui_elements:
                 for event in element.events:
                     event()
+
+            for element in self.interactice_elements:
+                element.on_focus()
 
             func(*args, **kwargs)
 
@@ -117,11 +117,15 @@ class UIBuilder:
                 self.main_thread_event_buffer.pop(0)
 
             self.draw_change()
-            time.sleep(0.01)
+            time.sleep(0.001)
 
     def ExitLoop(self):
         self.run = False
 
+    @staticmethod
+    def clamp(value, min_val, max_val):
+        return max(min_val, min(value, max_val))   
+    
     @staticmethod
     def deepcopy(array):
         return [row[:] for row in array]
@@ -234,28 +238,26 @@ class UIBuilder:
             ui.event_buffer.append(Event("key_pressed", key))
 
     @staticmethod
-    def add_border_top(grid, type):
+    def add_border_top(grid, border_chars):
         grid[0] = [
-            Border.get_border_chars(type)["horizontal"] for _ in range(len(grid[0]))
+            border_chars["horizontal"] for _ in range(len(grid[0]))
         ]
 
     @staticmethod
-    def add_border_bottom(grid, type):
+    def add_border_bottom(grid, border_chars):
         grid[-1] = [
-            Border.get_border_chars(type)["horizontal"] for _ in range(len(grid[0]))
+            border_chars["horizontal"] for _ in range(len(grid[0]))
         ]
 
     @staticmethod
-    def add_border_left(grid, type):
-        border_chars = Border.get_border_chars(type)
+    def add_border_left(grid, border_chars):
         for row in grid:
             row[0] = border_chars["vertical"]
         grid[0][0] = border_chars["top_left_corner"]
         grid[-1][0] = border_chars["bottom_left_corner"]
 
     @staticmethod
-    def add_border_right(grid, type):
-        border_chars = Border.get_border_chars(type)
+    def add_border_right(grid, border_chars):
         for row in grid:
             row[-1] = border_chars["vertical"]
         grid[0][-1] = border_chars["top_right_corner"]
@@ -263,10 +265,11 @@ class UIBuilder:
 
     @staticmethod
     def add_border(grid, type):
-        UIBuilder.add_border_bottom(grid, type)
-        UIBuilder.add_border_top(grid, type)
-        UIBuilder.add_border_left(grid, type)
-        UIBuilder.add_border_right(grid, type)
+        border_chars = Border.get_border_chars(type)
+        UIBuilder.add_border_bottom(grid, border_chars)
+        UIBuilder.add_border_top(grid, border_chars)
+        UIBuilder.add_border_left(grid, border_chars)
+        UIBuilder.add_border_right(grid, border_chars)
 
 
 class Event:
