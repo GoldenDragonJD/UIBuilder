@@ -178,3 +178,70 @@ class Input(Element):
             else:
                 self.input_buffer.insert(self.where_to_place, char)
                 self.where_to_place += 1
+
+
+class Button(Element):
+    def __init__(
+        self, uiBuilder: UIBuilder, location_x, location_y, text, enter_func
+    ) -> None:
+        super().__init__(uiBuilder, location_x, location_y)
+        self.ui = uiBuilder
+        self.location_x = location_x
+        self.location_y = location_y
+        self.padding_horizontal = 0
+        self.padding_vertical = 0
+        self.is_interactive = True
+        self.enter_func = enter_func
+        self.events = [self.on_enter]
+        self.focus = False
+        self.border_type = Border.ROUND
+        self.text = text
+        self.grid = []
+        self.create_grid()
+
+    def add_to_grid(self):
+        UIBuilder.add_border(self.grid, self.border_type)
+        for y in range(len(self.grid)):
+            for x in range(len(self.grid[y])):
+                self.ui.grid[y + self.location_y][x + self.location_x] = self.grid[y][x]
+
+    def create_grid(self):
+        self.grid = [
+            [" " for _ in range(len(self.text) + (self.padding_horizontal * 2) + 2)]
+            for _ in range(3 + (self.padding_vertical * 2))
+        ]
+
+    def on_enter(self):
+        if (
+            self.ui.current_event.type == Event.KEY_PRESS
+            and self.ui.current_event.value == "ENTER"
+            and self.focus
+        ):
+            self.enter_func(self)
+
+
+    def render_text(self):
+        self.create_grid()
+        for y in range(len(self.grid)):
+            for x in range(len(self.grid[y])):
+                if (
+                    y == int(len(self.grid) / 2)
+                    and x > self.padding_horizontal
+                    and x <= len(self.text) + self.padding_horizontal
+                ):
+                    self.grid[y][x] = self.text[x - (self.padding_horizontal + 1)]
+
+    def on_focus(self):
+        if self.focus:
+            self.render_text()
+            to_render = UIBuilder.deepcopy(self.grid)
+            for row in range(len(self.grid)):
+                if row == len(self.grid) - 1 or row == 0:
+                    continue
+                for ch in range(len(self.grid[row])):
+                    if ch == 0 and ch == len(self.grid[row]):
+                        continue
+
+                    self.grid[row][ch] = f"\033[7m{to_render[row][ch]}"
+        else:
+            self.render_text()

@@ -151,7 +151,7 @@ class UIBuilder:
         try:
             import msvcrt
 
-            return msvcrt.getch().decode("utf-8", "ignore")
+            return msvcrt.getwch()
         except ImportError:
             fd = sys.stdin.fileno()
             return os.read(fd, 1).decode("utf-8", "ignore")
