@@ -28,7 +28,7 @@ def on_enter(input_elem):
     status_label.text = f"Status: Hello {name}!"
     input_elem.input_buffer.clear()
     input_elem.where_to_place = 0 # reset cursor
-    
+
 user_input.enter_func = on_enter
 
 # 4. Define custom loop logic (Runs every ~0.01s)
@@ -43,10 +43,10 @@ def app_logic():
         if state["progress"] > 100:
             state["progress"] = 0
         pbar.change_progress(state["progress"])
-        
+
     # Example of exiting loop programmatically
     if "".join(user_input.input_buffer).lower() == "exit":
         ui.ExitLoop()
-        
+
 # 5. Run the UI
 ui.Loop(app_logic)

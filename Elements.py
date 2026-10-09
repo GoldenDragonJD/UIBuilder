@@ -197,6 +197,7 @@ class Button(Element):
         self.border_type = Border.ROUND
         self.text = text
         self.grid = []
+        self.name = "Button"
         self.create_grid()
 
     def add_to_grid(self):
@@ -245,3 +246,15 @@ class Button(Element):
                     self.grid[row][ch] = f"\033[7m{to_render[row][ch]}"
         else:
             self.render_text()
+
+
+class ListView(Element):
+    def __init__(self, uiBuilder: UIBuilder, location_x, location_y, size_x, size_y, border_type) -> None:
+        super().__init__(uiBuilder, location_x, location_y)
+        self.name = "ListView"
+        self.ui = uiBuilder
+        self.size_x = size_x
+        self.size_y = size_y
+        self.border_type = border_type
+        self.elements = []
+        
