@@ -4,7 +4,7 @@ import sys
 import threading
 import time
 
-from Border import Border
+from .border import Border
 
 
 class UIBuilder:
@@ -124,8 +124,8 @@ class UIBuilder:
 
     @staticmethod
     def clamp(value, min_val, max_val):
-        return max(min_val, min(value, max_val))   
-    
+        return max(min_val, min(value, max_val))
+
     @staticmethod
     def deepcopy(array):
         return [row[:] for row in array]
@@ -188,7 +188,7 @@ class UIBuilder:
                             seq += UIBuilder.getchar()
                         else:
                             break
-                    
+
                     ansi_map = {
                         "[A": "UP", "[B": "DOWN", "[C": "RIGHT", "[D": "LEFT",
                         "[1;2A": "SHIFT_UP", "[1;3A": "ALT_UP", "[1;5A": "CTRL_UP", "[1;6A": "CTRL_SHIFT_UP",
@@ -218,7 +218,7 @@ class UIBuilder:
                         "On": ".", "OM": "ENTER", "Om": "-", "Ok": "+", "Ol": "+",
                         "Oj": "*", "Oo": "/"
                     }
-                    
+
                     if seq in ansi_map:
                         return ansi_map[seq]
             return "ESC"

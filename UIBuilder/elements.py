@@ -1,5 +1,4 @@
-from Border import Border
-from UIBuilder import *
+from .uibuilder import *
 
 
 class Element:
@@ -220,7 +219,6 @@ class Button(Element):
         ):
             self.enter_func(self)
 
-
     def render_text(self):
         self.create_grid()
         for y in range(len(self.grid)):
@@ -249,7 +247,9 @@ class Button(Element):
 
 
 class ListView(Element):
-    def __init__(self, uiBuilder: UIBuilder, location_x, location_y, size_x, size_y, border_type) -> None:
+    def __init__(
+        self, uiBuilder: UIBuilder, location_x, location_y, size_x, size_y, border_type
+    ) -> None:
         super().__init__(uiBuilder, location_x, location_y)
         self.name = "ListView"
         self.ui = uiBuilder
@@ -257,4 +257,3 @@ class ListView(Element):
         self.size_y = size_y
         self.border_type = border_type
         self.elements = []
-        

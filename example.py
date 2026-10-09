@@ -1,6 +1,4 @@
-from Border import Border
-from Elements import Input, Label, ProgressBar
-from UIBuilder import UIBuilder
+from UIBuilder import *
 
 # 1. Initialize the UI
 ui = UIBuilder(grid_size_x=40, grid_size_y=12, location_x=5, location_y=2)

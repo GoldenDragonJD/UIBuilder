@@ -3,58 +3,58 @@ class Border:
     HEAVY = "heavy"
     DOUBLE = "double"
     ROUND = "round"
-    
+
     # Light
-    TOP_LEFT_CORNER_LIGHT = '┌'
-    TOP_RIGHT_CORNER_LIGHT = '┐'
-    BOTTOM_LEFT_CORNER_LIGHT = '└'
-    BOTTOM_RIGHT_CORNER_LIGHT = '┘'
-    TOP_T_LIGHT = '┬'
-    BOTTOM_T_LIGHT = '┴'
-    LEFT_T_LIGHT = '├'
-    RIGHT_T_LIGHT = '┤'
-    CROSS_LIGHT = '┼'
-    HORIZONTAL_LIGHT = '─'
-    VERTICAL_LIGHT = '│'
+    TOP_LEFT_CORNER_LIGHT = "┌"
+    TOP_RIGHT_CORNER_LIGHT = "┐"
+    BOTTOM_LEFT_CORNER_LIGHT = "└"
+    BOTTOM_RIGHT_CORNER_LIGHT = "┘"
+    TOP_T_LIGHT = "┬"
+    BOTTOM_T_LIGHT = "┴"
+    LEFT_T_LIGHT = "├"
+    RIGHT_T_LIGHT = "┤"
+    CROSS_LIGHT = "┼"
+    HORIZONTAL_LIGHT = "─"
+    VERTICAL_LIGHT = "│"
 
     # Heavy
-    TOP_LEFT_CORNER_HEAVY = '┏'
-    TOP_RIGHT_CORNER_HEAVY = '┓'
-    BOTTOM_LEFT_CORNER_HEAVY = '┗'
-    BOTTOM_RIGHT_CORNER_HEAVY = '┛'
-    TOP_T_HEAVY = '┳'
-    BOTTOM_T_HEAVY = '┻'
-    LEFT_T_HEAVY = '┣'
-    RIGHT_T_HEAVY = '┫'
-    CROSS_HEAVY = '╋'
-    HORIZONTAL_HEAVY = '━'
-    VERTICAL_HEAVY = '┃'
+    TOP_LEFT_CORNER_HEAVY = "┏"
+    TOP_RIGHT_CORNER_HEAVY = "┓"
+    BOTTOM_LEFT_CORNER_HEAVY = "┗"
+    BOTTOM_RIGHT_CORNER_HEAVY = "┛"
+    TOP_T_HEAVY = "┳"
+    BOTTOM_T_HEAVY = "┻"
+    LEFT_T_HEAVY = "┣"
+    RIGHT_T_HEAVY = "┫"
+    CROSS_HEAVY = "╋"
+    HORIZONTAL_HEAVY = "━"
+    VERTICAL_HEAVY = "┃"
 
     # Double
-    TOP_LEFT_CORNER_DOUBLE = '╔'
-    TOP_RIGHT_CORNER_DOUBLE = '╗'
-    BOTTOM_LEFT_CORNER_DOUBLE = '╚'
-    BOTTOM_RIGHT_CORNER_DOUBLE = '╝'
-    TOP_T_DOUBLE = '╦'
-    BOTTOM_T_DOUBLE = '╩'
-    LEFT_T_DOUBLE = '╠'
-    RIGHT_T_DOUBLE = '╣'
-    CROSS_DOUBLE = '╬'
-    HORIZONTAL_DOUBLE = '═'
-    VERTICAL_DOUBLE = '║'
+    TOP_LEFT_CORNER_DOUBLE = "╔"
+    TOP_RIGHT_CORNER_DOUBLE = "╗"
+    BOTTOM_LEFT_CORNER_DOUBLE = "╚"
+    BOTTOM_RIGHT_CORNER_DOUBLE = "╝"
+    TOP_T_DOUBLE = "╦"
+    BOTTOM_T_DOUBLE = "╩"
+    LEFT_T_DOUBLE = "╠"
+    RIGHT_T_DOUBLE = "╣"
+    CROSS_DOUBLE = "╬"
+    HORIZONTAL_DOUBLE = "═"
+    VERTICAL_DOUBLE = "║"
 
     # Rounded Corners
-    TOP_LEFT_CORNER_ROUNDED = '╭'
-    TOP_RIGHT_CORNER_ROUNDED = '╮'
-    BOTTOM_LEFT_CORNER_ROUNDED = '╰'
-    BOTTOM_RIGHT_CORNER_ROUNDED = '╯'
-    TOP_T_ROUNDED = '┬'
-    BOTTOM_T_ROUNDED = '┴'
-    LEFT_T_ROUNDED = '├'
-    RIGHT_T_ROUNDED = '┤'
-    CROSS_ROUNDED = '┼'
-    HORIZONTAL_ROUNDED = '─'
-    VERTICAL_ROUNDED = '│'
+    TOP_LEFT_CORNER_ROUNDED = "╭"
+    TOP_RIGHT_CORNER_ROUNDED = "╮"
+    BOTTOM_LEFT_CORNER_ROUNDED = "╰"
+    BOTTOM_RIGHT_CORNER_ROUNDED = "╯"
+    TOP_T_ROUNDED = "┬"
+    BOTTOM_T_ROUNDED = "┴"
+    LEFT_T_ROUNDED = "├"
+    RIGHT_T_ROUNDED = "┤"
+    CROSS_ROUNDED = "┼"
+    HORIZONTAL_ROUNDED = "─"
+    VERTICAL_ROUNDED = "│"
 
     @staticmethod
     def get_border_chars(type):
@@ -70,7 +70,7 @@ class Border:
                 "right_t": Border.RIGHT_T_LIGHT,
                 "cross": Border.CROSS_LIGHT,
                 "horizontal": Border.HORIZONTAL_LIGHT,
-                "vertical": Border.VERTICAL_LIGHT
+                "vertical": Border.VERTICAL_LIGHT,
             }
         elif type == Border.HEAVY:
             return {
@@ -84,7 +84,7 @@ class Border:
                 "right_t": Border.RIGHT_T_HEAVY,
                 "cross": Border.CROSS_HEAVY,
                 "horizontal": Border.HORIZONTAL_HEAVY,
-                "vertical": Border.VERTICAL_HEAVY
+                "vertical": Border.VERTICAL_HEAVY,
             }
         elif type == Border.DOUBLE:
             return {
@@ -98,7 +98,7 @@ class Border:
                 "right_t": Border.RIGHT_T_DOUBLE,
                 "cross": Border.CROSS_DOUBLE,
                 "horizontal": Border.HORIZONTAL_DOUBLE,
-                "vertical": Border.VERTICAL_DOUBLE
+                "vertical": Border.VERTICAL_DOUBLE,
             }
         elif type == Border.ROUND:
             return {
@@ -112,6 +112,6 @@ class Border:
                 "right_t": Border.RIGHT_T_ROUNDED,
                 "cross": Border.CROSS_ROUNDED,
                 "horizontal": Border.HORIZONTAL_ROUNDED,
-                "vertical": Border.VERTICAL_ROUNDED
+                "vertical": Border.VERTICAL_ROUNDED,
             }
         return {}

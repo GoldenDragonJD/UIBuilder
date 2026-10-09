@@ -4,7 +4,7 @@ UIBuilder is a simple terminal UI library that allows you to create interactive 
 
 ## User-Facing API Documentation
 
-### `UIBuilder` (from `UIBuilder.py`)
+### `UIBuilder` (from `uibuilder.py`)
 The main class that initializes and manages the terminal UI canvas.
 
 - **`__init__(self, grid_size_x=80, grid_size_y=20, location_x=0, location_y=0)`**
@@ -18,7 +18,7 @@ The main class that initializes and manages the terminal UI canvas.
 - **`ExitLoop(self)`**
   Stops the main event loop and prepares the application to exit safely.
 
-### `Elements` (from `Elements.py`)
+### `Elements` (from `elements.py`)
 Various UI components you can add to your UIBuilder instance.
 
 #### `Label`
@@ -46,7 +46,7 @@ An interactive text input field with an optional border.
   - `input_buffer`: The list of characters currently typed. You can read it as `"".join(input.input_buffer)`.
   - `placeholder`: The text displayed when the input is empty.
 
-### `Border` (from `Border.py`)
+### `Border` (from `border.py`)
 Provides constant styles to customize the border of `Input` elements. Use these with `my_input.border_type = Border.STYLE`.
 - `Border.LIGHT`
 - `Border.HEAVY`

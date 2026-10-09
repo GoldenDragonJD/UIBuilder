@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "uibuilder"
+version = "0.5.0"
+authors = [
+  { name="Juan Delgado", email="lisbe2003@gmail.com" },
+]
+description = "A TUI framework to help build a simple TUI on a quick hobby project."
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = { file = "LICENSE" }
+
+[project.urls]
+Homepage = "https://github.com/GoldenDragonJD/UIBuilder"
+Issues = "https://github.com/GoldenDragonJD/UIBuilder/issues"
