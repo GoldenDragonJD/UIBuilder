@@ -1,7 +1,6 @@
-import time
-from UIBuilder import UIBuilder
-from Elements import ProgressBar, Label, Input
 from Border import Border
+from Elements import Input, Label, ProgressBar
+from UIBuilder import UIBuilder
 
 # 1. Initialize the UI
 ui = UIBuilder(grid_size_x=40, grid_size_y=12, location_x=5, location_y=2)
@@ -22,18 +21,21 @@ ui.add_ui_element(user_input)
 status_label = Label(ui, 2, 9, "Status: Waiting for input...")
 ui.add_ui_element(status_label)
 
+
 # 3. Define Interactions
 def on_enter(input_elem):
     name = "".join(input_elem.input_buffer)
     status_label.text = f"Status: Hello {name}!"
     input_elem.input_buffer.clear()
-    input_elem.where_to_place = 0 # reset cursor
+    input_elem.where_to_place = 0  # reset cursor
 
-user_input.enter_func = on_enter
+
+user_input.enter_func = on_enter  # pyright: ignore[reportAttributeAccessIssue]
 
 # 4. Define custom loop logic (Runs every ~0.01s)
 # Using a dictionary to keep track of state
 state = {"ticks": 0, "progress": 0}
+
 
 def app_logic():
     state["ticks"] += 1
@@ -47,6 +49,7 @@ def app_logic():
     # Example of exiting loop programmatically
     if "".join(user_input.input_buffer).lower() == "exit":
         ui.ExitLoop()
+
 
 # 5. Run the UI
 ui.Loop(app_logic)
