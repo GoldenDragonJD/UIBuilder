@@ -4,6 +4,8 @@ import sys
 import threading
 import time
 
+from uibuilder.elements import Element
+
 from .border import Border
 
 
@@ -47,16 +49,32 @@ class UIBuilder:
         print(f"\033[{self.location_y + self.grid_size_y}E", end="")
 
     def on_focus(self):
-        if not self.focus: return
-        print('\033[?25l', end="")
+        if not self.focus:
+            return
+        print("\033[?25l", end="")
+
+    def cycle(self):
+        first_element = self.interactice_elements.pop(0)
+        self.interactice_elements.append(first_element)
 
     def cycle_focus(self):
         if (
             self.current_event.type == Event.KEY_PRESS
             and self.current_event.value == "TAB"
         ):
-            first_element = self.interactice_elements.pop(0)
-            self.interactice_elements.append(first_element)
+            self.cycle()
+            while (
+                isinstance(self.interactice_elements[0], Element)
+                and not self.interactice_elements[0].is_active
+            ):
+                self.cycle()
+
+    def set_focus(self, element):
+        if not isinstance(element, (UIBuilder, Element)):
+            return
+
+        while self.interactice_elements[0] == element:
+            self.cycle()
 
     def print_here(self, x, y, char):
         print(f"\033[{y + self.location_y};{x + self.location_x}H", end="")
@@ -73,7 +91,7 @@ class UIBuilder:
         for y in range(self.grid_size_y):
             for x in range(self.grid_size_x):
                 if self.grid[y][x] != self.last_update[y][x]:
-                    self.print_here(0, 0, '\033[0m')
+                    self.print_here(0, 0, "\033[0m")
                     self.print_here(x + 1, y + 1, self.grid[y][x])
         self.last_update = self.deepcopy(self.grid)
 
@@ -96,6 +114,9 @@ class UIBuilder:
                 if self.main_thread_event_buffer
                 else Event.NoneEvent()
             )
+
+            if self.current_event.type == Event.KEY_PRESS and self.current_event.value == "ESC":
+                self.ExitLoop()
 
             self.cycle_focus()
 
@@ -190,21 +211,42 @@ class UIBuilder:
                             break
 
                     ansi_map = {
-                        "[A": "UP", "[B": "DOWN", "[C": "RIGHT", "[D": "LEFT",
-                        "[1;2A": "SHIFT_UP", "[1;3A": "ALT_UP", "[1;5A": "CTRL_UP", "[1;6A": "CTRL_SHIFT_UP",
-                        "[1;2B": "SHIFT_DOWN", "[1;3B": "ALT_DOWN", "[1;5B": "CTRL_DOWN", "[1;6B": "CTRL_SHIFT_DOWN",
-                        "[1;2C": "SHIFT_RIGHT", "[1;3C": "ALT_RIGHT", "[1;5C": "CTRL_RIGHT", "[1;6C": "CTRL_SHIFT_RIGHT",
-                        "[1;2D": "SHIFT_LEFT", "[1;3D": "ALT_LEFT", "[1;5D": "CTRL_LEFT", "[1;6D": "CTRL_SHIFT_LEFT",
-                        "[H": "HOME", "[1~": "HOME",
-                        "[F": "END", "[4~": "END",
+                        "[A": "UP",
+                        "[B": "DOWN",
+                        "[C": "RIGHT",
+                        "[D": "LEFT",
+                        "[1;2A": "SHIFT_UP",
+                        "[1;3A": "ALT_UP",
+                        "[1;5A": "CTRL_UP",
+                        "[1;6A": "CTRL_SHIFT_UP",
+                        "[1;2B": "SHIFT_DOWN",
+                        "[1;3B": "ALT_DOWN",
+                        "[1;5B": "CTRL_DOWN",
+                        "[1;6B": "CTRL_SHIFT_DOWN",
+                        "[1;2C": "SHIFT_RIGHT",
+                        "[1;3C": "ALT_RIGHT",
+                        "[1;5C": "CTRL_RIGHT",
+                        "[1;6C": "CTRL_SHIFT_RIGHT",
+                        "[1;2D": "SHIFT_LEFT",
+                        "[1;3D": "ALT_LEFT",
+                        "[1;5D": "CTRL_LEFT",
+                        "[1;6D": "CTRL_SHIFT_LEFT",
+                        "[H": "HOME",
+                        "[1~": "HOME",
+                        "[F": "END",
+                        "[4~": "END",
                         "[2~": "INSERT",
                         "[3~": "DELETE",
                         "[5~": "PAGE_UP",
                         "[6~": "PAGE_DOWN",
-                        "OP": "F1", "[11~": "F1",
-                        "OQ": "F2", "[12~": "F2",
-                        "OR": "F3", "[13~": "F3",
-                        "OS": "F4", "[14~": "F4",
+                        "OP": "F1",
+                        "[11~": "F1",
+                        "OQ": "F2",
+                        "[12~": "F2",
+                        "OR": "F3",
+                        "[13~": "F3",
+                        "OS": "F4",
+                        "[14~": "F4",
                         "[15~": "F5",
                         "[17~": "F6",
                         "[18~": "F7",
@@ -213,10 +255,23 @@ class UIBuilder:
                         "[21~": "F10",
                         "[23~": "F11",
                         "[24~": "F12",
-                        "Op": "0", "Oq": "1", "Or": "2", "Os": "3", "Ot": "4",
-                        "Ou": "5", "Ov": "6", "Ow": "7", "Ox": "8", "Oy": "9",
-                        "On": ".", "OM": "ENTER", "Om": "-", "Ok": "+", "Ol": "+",
-                        "Oj": "*", "Oo": "/"
+                        "Op": "0",
+                        "Oq": "1",
+                        "Or": "2",
+                        "Os": "3",
+                        "Ot": "4",
+                        "Ou": "5",
+                        "Ov": "6",
+                        "Ow": "7",
+                        "Ox": "8",
+                        "Oy": "9",
+                        "On": ".",
+                        "OM": "ENTER",
+                        "Om": "-",
+                        "Ok": "+",
+                        "Ol": "+",
+                        "Oj": "*",
+                        "Oo": "/",
                     }
 
                     if seq in ansi_map:
@@ -239,15 +294,11 @@ class UIBuilder:
 
     @staticmethod
     def add_border_top(grid, border_chars):
-        grid[0] = [
-            border_chars["horizontal"] for _ in range(len(grid[0]))
-        ]
+        grid[0] = [border_chars["horizontal"] for _ in range(len(grid[0]))]
 
     @staticmethod
     def add_border_bottom(grid, border_chars):
-        grid[-1] = [
-            border_chars["horizontal"] for _ in range(len(grid[0]))
-        ]
+        grid[-1] = [border_chars["horizontal"] for _ in range(len(grid[0]))]
 
     @staticmethod
     def add_border_left(grid, border_chars):
