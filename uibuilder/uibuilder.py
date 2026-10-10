@@ -4,8 +4,6 @@ import sys
 import threading
 import time
 
-from uibuilder.elements import Element
-
 from .border import Border
 
 
@@ -58,6 +56,7 @@ class UIBuilder:
         self.interactice_elements.append(first_element)
 
     def cycle_focus(self):
+        from .elements import Element
         if (
             self.current_event.type == Event.KEY_PRESS
             and self.current_event.value == "TAB"
@@ -70,6 +69,7 @@ class UIBuilder:
                 self.cycle()
 
     def set_focus(self, element):
+        from .elements import Element
         if not isinstance(element, (UIBuilder, Element)):
             return
 
@@ -115,7 +115,10 @@ class UIBuilder:
                 else Event.NoneEvent()
             )
 
-            if self.current_event.type == Event.KEY_PRESS and self.current_event.value == "ESC":
+            if (
+                self.current_event.type == Event.KEY_PRESS
+                and self.current_event.value == "ESC"
+            ):
                 self.ExitLoop()
 
             self.cycle_focus()
