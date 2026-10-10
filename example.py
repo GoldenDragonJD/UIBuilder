@@ -1,4 +1,4 @@
-from UIBuilder import *
+from uibuilder import *
 
 # 1. Initialize the UI
 ui = UIBuilder(grid_size_x=40, grid_size_y=12, location_x=5, location_y=2)
