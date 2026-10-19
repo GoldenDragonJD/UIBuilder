@@ -181,14 +181,21 @@ class Input(Element):
 
 class Button(Element):
     def __init__(
-        self, uiBuilder: UIBuilder, location_x, location_y, text, enter_func
+        self,
+        uiBuilder: UIBuilder,
+        location_x,
+        location_y,
+        size_x,
+        size_y,
+        text,
+        enter_func,
     ) -> None:
         super().__init__(uiBuilder, location_x, location_y)
         self.ui = uiBuilder
         self.location_x = location_x
         self.location_y = location_y
-        self.padding_horizontal = 0
-        self.padding_vertical = 0
+        self.size_x = size_x
+        self.size_y = size_y
         self.is_interactive = True
         self.enter_func = enter_func
         self.events = [self.on_enter]
@@ -206,10 +213,7 @@ class Button(Element):
                 self.ui.grid[y + self.location_y][x + self.location_x] = self.grid[y][x]
 
     def create_grid(self):
-        self.grid = [
-            [" " for _ in range(len(self.text) + (self.padding_horizontal * 2) + 2)]
-            for _ in range(3 + (self.padding_vertical * 2))
-        ]
+        self.grid = [[" " for _ in range(self.size_x)] for _ in range(self.size_y)]
 
     def on_enter(self):
         if (
@@ -222,13 +226,12 @@ class Button(Element):
     def render_text(self):
         self.create_grid()
         for y in range(len(self.grid)):
+            offset = 0
             for x in range(len(self.grid[y])):
-                if (
-                    y == int(len(self.grid) / 2)
-                    and x > self.padding_horizontal
-                    and x <= len(self.text) + self.padding_horizontal
-                ):
-                    self.grid[y][x] = self.text[x - (self.padding_horizontal + 1)]
+                if y == int(len(self.grid) / 2) and x > (self.size_x / 2 - int(len(self.text) / 2) - 1) and x < len(self.text) + offset:
+                    self.grid[y][x] = self.text[x - offset]
+                else:
+                    offset += 1
 
     def on_focus(self):
         if self.focus:

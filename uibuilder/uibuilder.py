@@ -1,5 +1,6 @@
 import atexit
 import os
+import queue
 import sys
 import threading
 import time
@@ -23,6 +24,7 @@ class UIBuilder:
         self.current_event = Event.NoneEvent()
         self.focus = True
         self.name = "UI"
+        self.off_main_thread_queue = queue.Queue()
 
         try:
             import termios
@@ -57,6 +59,7 @@ class UIBuilder:
 
     def cycle_focus(self):
         from .elements import Element
+
         if (
             self.current_event.type == Event.KEY_PRESS
             and self.current_event.value == "TAB"
@@ -70,6 +73,7 @@ class UIBuilder:
 
     def set_focus(self, element):
         from .elements import Element
+
         if not isinstance(element, (UIBuilder, Element)):
             return
 
@@ -139,6 +143,13 @@ class UIBuilder:
 
             if self.main_thread_event_buffer:
                 self.main_thread_event_buffer.pop(0)
+
+            while not self.off_main_thread_queue.empty():
+                try:
+                    update = self.off_main_thread_queue.get_nowait()
+                    update()
+                except:  # noqa: E722
+                    break
 
             self.draw_change()
             time.sleep(0.001)
